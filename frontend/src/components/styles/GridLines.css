@@ -1,0 +1,16 @@
+.v-line, .h-line {
+  position: absolute;
+  background: black;
+}
+
+.v-line {
+  top: 0;
+  width: 1px; 
+  height: var(--board-size);
+}
+
+.h-line {
+  left: 0;
+  width: var(--board-size);
+  height: 1px; 
+}

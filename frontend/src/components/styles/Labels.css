@@ -1,0 +1,22 @@
+.top-letters {
+  position: relative;
+  height: var(--cell);
+  margin-left: var(--cell); /* 왼쪽 숫자 공간 */
+}
+
+.letter-cell {
+  position: absolute;
+  font-weight: bold;
+  text-align: center;
+}
+
+.left-numbers {
+  position: relative;
+  width: var(--cell);
+}
+
+.number-cell {
+  position: absolute;
+  font-weight: bold;
+  text-align: center;
+}

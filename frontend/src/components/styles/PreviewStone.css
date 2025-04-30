@@ -1,0 +1,35 @@
+.preview-stone {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.preview-stone.black {
+  background: black;
+}
+
+.preview-stone.white {
+  background: white;
+  border: 1px solid black;
+}
+
+/* 미리보기 텍스트 (말풍선 스타일) */
+.hover-preview {
+  position: absolute;
+  transform: translate(-50%, -150%);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 4px 6px;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}

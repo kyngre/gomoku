@@ -1,0 +1,25 @@
+:root {
+  --cell: 30px;
+  --board-size: calc((19 - 1) * var(--cell));
+}
+
+/* 전체 컨테이너 */
+.board-container {
+  display: inline-block;
+  position: relative;
+}
+
+/* 상단 문자 + 보드 전체 묶음 */
+.board-col {
+  display: flex; /* 왼쪽 숫자 + 보드판 가로 정렬 */
+}
+
+/* 보드판 */
+.board {
+  position: relative;
+  width: var(--board-size);
+  height: var(--board-size);
+  background-color: #d1a84b;
+  /* border: 2px solid black; */
+  user-select: none;
+}
