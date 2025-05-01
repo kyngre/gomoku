@@ -8,6 +8,7 @@ import Labels from './Labels';
 
 const API = import.meta.env.VITE_API_URL;   // 환경변수에서 읽음
 
+console.log(`${API}/move`);
 
 const SIZE = 19;
 const CELL = 30;
