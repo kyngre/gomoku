@@ -1,4 +1,5 @@
 # 오목 AI 웹사이트
+<img width="614" alt="Screenshot 2025-05-01 at 1 48 18 PM" src="https://github.com/user-attachments/assets/b2081046-9142-4f7d-b2cb-7bfe580f9430" />
 
 사용자와 인공지능(AI)이 브라우저 상에서 실시간으로 오목 대결을 펼칠 수 있는 웹 애플리케이션입니다. 단순한 룰 기반 오목부터, 학습형 AI에 이르기까지 다양한 난이도로 사용자의 전략적 사고를 자극합니다.
 
