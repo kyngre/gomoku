@@ -20,6 +20,8 @@ export default function Board() {
   const [turn, setTurn] = useState('black');
   const [hoverRow, setHoverRow] = useState(null);
   const [hoverCol, setHoverCol] = useState(null);
+  const [moves, setMoves] = useState([]);
+
 
   const handleClick = async (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -30,14 +32,16 @@ export default function Board() {
   
     if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return;
     if (board[row][col]) return;
-  
+    
     /* 1️⃣ 화면에 즉시 반영 (UX) */
     setBoard(prev => {
       const next = prev.map(r => [...r]);
       next[row][col] = turn;
       return next;
     });
+    setMoves(prev => [...prev, { row, col, player: turn }]);
     setTurn(prev => (prev === 'black' ? 'white' : 'black'));
+    
   
     /* 2️⃣ 서버에 착수 정보 전송 */
     try {
@@ -122,7 +126,17 @@ export default function Board() {
 
           {board.map((row, r) =>
             row.map((stone, c) =>
-              stone && <Stone key={`${r}-${c}`} row={r} col={c} color={stone} CELL={CELL} />
+              stone && <Stone
+          key={`${r}-${c}`}
+          row={r}
+          col={c}
+          color={stone}
+          CELL={CELL}
+          number={
+            moves.findIndex(m => m.row === r && m.col === c) + 1 || null
+          }
+        />
+        
             )
           )}
 

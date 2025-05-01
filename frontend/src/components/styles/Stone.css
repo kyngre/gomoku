@@ -4,15 +4,24 @@
   height: 20px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-}
-
-.stone.black {
-  background: black;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
 }
 
 .stone.white {
   background: white;
   border: 1px solid black;
+  color: black;
+}
+
+.stone.black {
+  background: black;
+}
+.stone-number {
+  pointer-events: none;
 }

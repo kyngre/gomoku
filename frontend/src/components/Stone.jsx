@@ -1,6 +1,6 @@
 import './styles/Stone.css';
 
-export default function Stone({ row, col, color, CELL }) {
+export default function Stone({ row, col, color, CELL, number }) {
   return (
     <div
       className={`stone ${color}`}
@@ -9,6 +9,7 @@ export default function Stone({ row, col, color, CELL }) {
         left: `${col * CELL}px`
       }}
     >
+      <span className="stone-number">{number}</span>
     </div>
   );
 }
