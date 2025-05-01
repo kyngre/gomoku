@@ -1,26 +1,73 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# ------------------------
+# ✅ 공통 무시 파일
+# ------------------------
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
 .DS_Store
+*.log
+logs/
+*.sw?
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
 
+# ------------------------
+# ✅ Node/Frontend 관련
+# ------------------------
+
+/frontend/node_modules/
+dist/
+dist-ssr/
+*.local
+
+# .env (보안)
 /frontend/.env
+
+# ------------------------
+# ✅ VSCode & Editor
+# ------------------------
+
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ------------------------
+# ✅ Spring Boot / Gradle 관련
+# ------------------------
+
+/backend/build/
+.gradle/
+/backend/.gradle/
+HELP.md
+
+# Gradle wrapper
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ build dirs
+!**/src/main/**/out/
+!**/src/test/**/out/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Eclipse STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
