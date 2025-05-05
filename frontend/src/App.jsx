@@ -1,18 +1,17 @@
-import Board from './components/Board';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Landing from './pages/Landing';
+import Play from './pages/Play';
+import UserAIs from "./pages/UserAIs"; 
 
 function App() {
   return (
-    <div style={{
-      width: '100vw',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <h1>오목 AI 웹</h1>
-      <Board />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/play" element={<Play />} />
+        <Route path="/user-ai" element={<UserAIs />} /> 
+      </Routes>
+    </Router>
   );
 }
 
