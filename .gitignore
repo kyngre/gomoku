@@ -36,38 +36,41 @@ dist-ssr/
 out/
 
 # ------------------------
-# ✅ Spring Boot / Gradle 관련
+# ✅ Python / Flask 관련
 # ------------------------
 
-/backend/build/
-.gradle/
-/backend/.gradle/
-HELP.md
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Gradle wrapper
-!**/gradle/wrapper/gradle-wrapper.jar
+# 가상환경
+venv/
+env/
+ENV/
+.venv/
+.pipenv/
+Pipfile.lock
 
-# IntelliJ build dirs
-!**/src/main/**/out/
-!**/src/test/**/out/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Python 환경설정
+*.env
+*.venv
+*.egg-info/
+.eggs/
 
-# Eclipse STS
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
+# Flask 개발 서버 관련 파일
+instance/
+.webassets-cache
 
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# 테스트/커버리지
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+
