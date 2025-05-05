@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 const aiLevels = [
   { id: "easy", name: "난이도 초급", description: "랜덤 착수 기반 AI", path: "/play?level=easy" },
-  { id: "medium", name: "난이도 중급", description: "룰 기반 전략 AI", path: "/play?level=medium" },
+  { id: "medium", name: "난이도 중급", description: "미니맥스 AI", path: "/play?level=medium" },
   { id: "hard", name: "난이도 고급", description: "딥러닝 학습형 AI", path: "/play?level=hard" },
 ];
 
