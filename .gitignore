@@ -22,7 +22,8 @@ dist-ssr/
 
 # .env (보안)
 /frontend/.env
-
+/backend/.env
+/mysql
 # ------------------------
 # ✅ VSCode & Editor
 # ------------------------
