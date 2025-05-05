@@ -1,10 +1,10 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Board from '../components/Board';
 
 function Play() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const level = searchParams.get("level") || "easy"; // 기본값 easy
+  const { strategy: level } = useParams();  // ✅ 경로 기반 전략 추출
+
 
   // 🔁 난이도에 따른 UI 정보 설정
   let aiName = "랜덤AI";
