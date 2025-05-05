@@ -7,6 +7,7 @@ import GridLines from './GridLines';
 import Labels from './Labels';
 
 const API = import.meta.env.VITE_API_URL;   // 환경변수에서 읽음
+const gameId = 1; // TODO: 나중에 새 게임 시작 시 실제 ID 받아오기
 
 console.log(`${API}/move`);
 
@@ -49,9 +50,10 @@ export default function Board() {
       const res = await axios.post(`${API}/move`, {
         row,
         col,
-        player: turn        // "black" 또는 "white"
+        player: turn,        // "black" 또는 "white"
+        game_id: gameId   
       });
-  
+      
       /* 3️⃣ (선택) 서버가 AI 수를 반환하면 즉시 반영 */
       if (res.data?.aiMove) {
         const { row: aiR, col: aiC } = res.data.aiMove;
@@ -69,7 +71,6 @@ export default function Board() {
   
     } catch (err) {
       console.error('POST /move 실패', err);
-      // TODO: 토스트 등으로 사용자에게 알려 주기
     }
   };
   

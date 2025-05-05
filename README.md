@@ -47,7 +47,7 @@
 
 ## 🧱 기술 스택
 - **Frontend**: React.js, HTML/CSS/JS
-- **Backend**: Spring Boot (Java)
+- **Backend**: Flask (Python)
 - **Database**: MySQL
 
 ---
