@@ -11,13 +11,11 @@ def post_move():
     row = data.get("row")
     col = data.get("col")
     player = data.get("player")
-    game_id = data.get("game_id")
 
-
-    if None in [row, col, player, game_id]:
+    if None in [row, col, player]:
         return jsonify({"error": "Missing fields"}), 400
 
-    move = Move(row=row, col=col, player=player, game_id=game_id)
+    move = Move(row=row, col=col, player=player)
     db.session.add(move)
     db.session.commit()
 
