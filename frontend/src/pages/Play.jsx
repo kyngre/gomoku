@@ -44,11 +44,6 @@ function Play() {
         <Board />
       </div>
 
-      {/* ℹ️ 상태 메시지 */}
-      <div className="text-sm text-gray-600 italic mb-4">
-        AI가 생각 중입니다...
-      </div>
-
       {/* 🔁 버튼 영역 */}
       <div className="flex gap-4">
         <button
