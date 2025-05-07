@@ -53,6 +53,7 @@ def get_score_from_pattern(pattern, player):
 
 
 def get_mini_max_move(board):
+    board = np.array(board)
     able_positions = set()
     directions = [(1, 0), (0, 1), (1, 1), (1, -1), (-1, 0), (0, -1), (-1, -1), (-1, 1)]
 
