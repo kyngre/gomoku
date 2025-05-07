@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from app.database import db
 from app.models import Game, Move
 from app.strategies import get_strategy
-import random
 
 # 게임 관련 라우팅을 위한 블루프린트 생성
 game_bp = Blueprint("game", __name__)

@@ -8,3 +8,4 @@ def get_random_move(board):
         if board[i][j] == 0
     ]
     return random.choice(empty) if empty else None
+
