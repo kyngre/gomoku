@@ -149,7 +149,28 @@ export default function Board() {
         </div>
         <div className="board" onClick={handleClick} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
           <GridLines SIZE={SIZE} CELL={CELL}/>
-          {board.map((row,r)=>row.map((st,c)=>st&&<Stone key={`${r}-${c}`} row={r} col={c} color={st} CELL={CELL} number={moves.findIndex(m=>m.row===r&&m.col===c)+1||null}/>))}
+          {board.map((row, r) => // board의 각 행(row)과 행 인덱스(r)를 반복
+  row.map((st, c) =>   // 각 행의 각 칸(st)과 열 인덱스(c)를 반복
+    st && (            // 칸에 돌(st)이 있으면(즉, 값이 null/undefined/false가 아니면)
+      <Stone
+        key={`${r}-${c}`}   // React에서 각 요소를 구분하기 위한 고유 key
+        row={r}             // 현재 행 인덱스
+        col={c}             // 현재 열 인덱스
+        color={st}          // 돌의 색상(흑/백 등)
+        CELL={CELL}         // CELL이라는 props 전달(아마 셀 크기 등)
+        number={moves.findIndex(m => m.row === r && m.col === c) + 1 || null}
+        // number: 이 위치(r, c)에 놓인 돌이 몇 번째 수인지(없으면 null)
+        isLast={
+          moves.length > 0 &&
+          moves[moves.length - 1].row === r &&
+          moves[moves.length - 1].col === c
+        }
+        // isLast: 마지막으로 놓인 돌이 이 자리면 true, 아니면 false
+      />
+    )
+  )
+)}
+
           {hoverRow!==null&&hoverCol!==null&&<PreviewStone row={hoverRow} col={hoverCol} turn={userColor} label={getLabel(hoverRow,hoverCol)} CELL={CELL}/>}'
         </div>
       </div>

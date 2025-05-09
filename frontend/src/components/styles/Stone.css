@@ -25,3 +25,8 @@
 .stone-number {
   pointer-events: none;
 }
+
+.stone.last-move {
+  box-shadow: 0 0 8px 3px red;
+  border: 2px solid red;
+}
