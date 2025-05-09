@@ -20,10 +20,7 @@ dist/
 dist-ssr/
 *.local
 
-# .env (보안)
-/frontend/.env
-/backend/.env
-/mysql
+
 # ------------------------
 # ✅ VSCode & Editor
 # ------------------------
@@ -74,4 +71,10 @@ coverage.xml
 *.cover
 *.py,cover
 
+# .env (보안)
+/frontend/.env
+/backend/.env
+# database 관련
+/mysql
+mysql_data/
 
