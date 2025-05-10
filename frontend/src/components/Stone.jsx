@@ -1,6 +1,7 @@
+import React from 'react';
 import './styles/Stone.css';
 
-export default function Stone({ row, col, color, CELL, number, isLast }) {
+function Stone({ row, col, color, CELL, number, isLast }) {
   return (
     <div
       className={`stone ${color} ${isLast ? 'last-move' : ''}`}
@@ -14,3 +15,4 @@ export default function Stone({ row, col, color, CELL, number, isLast }) {
   );
 }
 
+export default React.memo(Stone);

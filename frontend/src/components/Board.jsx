@@ -1,5 +1,5 @@
 // Board.jsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Board.css';
@@ -29,6 +29,14 @@ export default function Board() {
   const [hoverRow, setHoverRow] = useState(null);
   const [hoverCol, setHoverCol] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const moveNumbers = useMemo(() => {
+  const map = new Map();
+  moves.forEach((move, index) => {
+    map.set(`${move.row}-${move.col}`, index + 1);
+  });
+  return map;
+}, [moves]);
+
 
   // 게임 시작 요청 함수
   const startGame = async (pickedColor) => {
@@ -171,7 +179,7 @@ const toggleTurn = () => {
         col={c}             // 현재 열 인덱스
         color={st}          // 돌의 색상(흑/백 등)
         CELL={CELL}         // CELL이라는 props 전달(아마 셀 크기 등)
-        number={moves.findIndex(m => m.row === r && m.col === c) + 1 || null}
+        number={moveNumbers.get(`${r}-${c}`) || null}
         // number: 이 위치(r, c)에 놓인 돌이 몇 번째 수인지(없으면 null)
         isLast={
           moves.length > 0 &&
