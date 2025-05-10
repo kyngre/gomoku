@@ -1,4 +1,3 @@
-// Board.jsx
 import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -8,10 +7,23 @@ import PreviewStone from './PreviewStone';
 import GridLines from './GridLines';
 import Labels from './Labels';
 
-const API     = import.meta.env.VITE_API_URL;
-const SIZE    = 19;
-const CELL    = 30;
-const LETTERS = 'ABCDEFGHIJKLMNOPQRS'.split('');
+import {
+  API_URL,
+  BOARD_SIZE,
+  CELL_SIZE,
+  LETTERS,
+  COLORS,
+  STRATEGIES,
+  GAME_RESULT,
+} from '../constants';
+
+import {
+  createEmptyBoard,
+  getPositionLabel,
+  getBoardCoords,
+  createMoveNumberMap,
+  isValidBoardCoord,
+} from '../utils';
 
 export default function Board() {
   const { strategy } = useParams();
@@ -19,36 +31,26 @@ export default function Board() {
   // 사용자 색상 선택: 'black' 또는 'white'
   const [choice, setChoice] = useState(null);
   const [gameId, setGameId] = useState(null);
-  const [board, setBoard] = useState(
-    Array.from({ length: SIZE }, () => Array(SIZE).fill(null))
-  );
+  const [board, setBoard] = useState(createEmptyBoard());
   const [moves, setMoves] = useState([]);
-  const [userColor, setUserColor] = useState('black');
-  const [aiColor, setAiColor] = useState('white');
-  const [turn, setTurn] = useState('black');
+  const [userColor, setUserColor] = useState(COLORS.BLACK);
+  const [aiColor, setAiColor] = useState(COLORS.WHITE);
+  const [turn, setTurn] = useState(COLORS.BLACK);
   const [hoverRow, setHoverRow] = useState(null);
   const [hoverCol, setHoverCol] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const moveNumbers = useMemo(() => {
-  const map = new Map();
-  moves.forEach((move, index) => {
-    map.set(`${move.row}-${move.col}`, index + 1);
-  });
-  return map;
-}, [moves]);
 
+  const moveNumbers = useMemo(() => createMoveNumberMap(moves), [moves]);
 
   // 게임 시작 요청 함수
   const startGame = async (pickedColor) => {
-    // 초기화
     setGameOver(false); 
-    setBoard(Array.from({ length: SIZE }, () => Array(SIZE).fill(null)));
+    setBoard(createEmptyBoard());
     setMoves([]);
     setChoice(pickedColor);
 
-    // 서버에 시작 요청
-    const res = await axios.post(`${API}/start-game`, {
-      ai_strategy: strategy || 'easy',
+    const res = await axios.post(`${API_URL}/start-game`, {
+      ai_strategy: strategy || STRATEGIES.EASY,
       user_color: pickedColor
     });
     const { game_id, user_color, ai_color, first_ai_move } = res.data;
@@ -57,7 +59,6 @@ export default function Board() {
     setUserColor(user_color);
     setAiColor(ai_color);
 
-    // AI가 먼저 뒀다면 한 수 반영
     if (first_ai_move) {
       const { row, col, player } = first_ai_move;
       setBoard(b => {
@@ -66,20 +67,19 @@ export default function Board() {
       setMoves([{ row, col, player }]);
       setTurn(prev => prev === userColor ? aiColor : userColor);
     } else {
-      // 아니면 흑돌이 기본 선공
-      setTurn('black');
+      setTurn(COLORS.BLACK);
     }
   };
 
-   // 색상 선택 카드 UI
-   if (!choice) {
+  // 색상 선택 카드 UI
+  if (!choice) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
         <h2 className="text-3xl font-bold text-gray-800 mb-8">돌 색상을 선택하세요</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
           {/* 흑돌 카드 */}
           <div
-            onClick={() => startGame('black')}
+            onClick={() => startGame(COLORS.BLACK)}
             className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-black"
           >
             <div className="w-24 h-24 bg-black rounded-full mb-4"></div>
@@ -89,7 +89,7 @@ export default function Board() {
 
           {/* 백돌 카드 */}
           <div
-            onClick={() => startGame('white')}
+            onClick={() => startGame(COLORS.WHITE)}
             className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-white"
           >
             <div className="w-24 h-24 bg-white rounded-full border border-gray-300 mb-4"></div>
@@ -101,32 +101,27 @@ export default function Board() {
     );
   }
 
-  
-  // 턴 전환 함수 추가
-const toggleTurn = () => {
-  setTurn(prev => (prev === userColor ? aiColor : userColor));
-};
-
-
+  // 턴 전환 함수
+  const toggleTurn = () => {
+    setTurn(prev => (prev === userColor ? aiColor : userColor));
+  };
 
   // 이하 기존 Board 렌더링 로직
   const handleClick = async (e) => {
-    if (gameOver || turn !== userColor) return; // 게임 종료 시 클릭 무시
+    if (gameOver || turn !== userColor) return;
 
-    if (turn !== userColor) return;
-    const { left, top } = e.currentTarget.getBoundingClientRect();
-    const col = Math.round((e.clientX - left) / CELL);
-    const row = Math.round((e.clientY - top) / CELL);
-    if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { row, col } = getBoardCoords(e.clientX, e.clientY, rect);
+    if (!isValidBoardCoord(row, col)) return;
     if (board[row][col]) return;
 
     // 유저 착수
     setBoard(b => { const nb=b.map(r=>[...r]); nb[row][col]=userColor; return nb; });
     setMoves(mv=>[...mv,{ row, col, player:userColor }]);
-    toggleTurn(); // 1차 턴 전환 (AI)
+    toggleTurn();
 
     try {
-      const res = await axios.post(`${API}/move/${strategy}`, {
+      const res = await axios.post(`${API_URL}/move/${strategy}`, {
         game_id: gameId,
         row, col,
         player: userColor
@@ -136,63 +131,71 @@ const toggleTurn = () => {
         const { row:ar, col:ac, player:ap } = res.data.ai_move;
         setBoard(b => { const nb=b.map(r=>[...r]); nb[ar][ac]=ap; return nb; });
         setMoves(mv=>[...mv,{ row:ar, col:ac, player:ap }]);
-        toggleTurn(); // 2차 턴 전환 (유저) 
+        toggleTurn();
       }
-      if (res.data.result==='user_win'||res.data.result==='ai_win') {
+      if (res.data.result===GAME_RESULT.USER_WIN||res.data.result===GAME_RESULT.AI_WIN) {
         alert(`${res.data.winner} wins!`);
-        setGameOver(true); // 게임 종료 상태 활성화
+        setGameOver(true);
         return;
       }
     } catch(err) {
-      // AI 착수 API 실패시 롤백 로직 추가
-      toggleTurn(); // 실패 시 턴 되돌리기
+      toggleTurn();
       console.error('POST /move 실패', err);
     }
   };
 
   const handleMouseMove = (e) => {
-    const { left, top } = e.currentTarget.getBoundingClientRect();
-    const col = Math.round((e.clientX - left) / CELL);
-    const row = Math.round((e.clientY - top) / CELL);
-    if (row>=0&&row<SIZE&&col>=0&&col<SIZE&&!board[row][col]) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { row, col } = getBoardCoords(e.clientX, e.clientY, rect);
+    if (isValidBoardCoord(row, col) && !board[row][col]) {
       setHoverRow(row); setHoverCol(col);
-    } else { setHoverRow(null); setHoverCol(null); }
+    } else {
+      setHoverRow(null); setHoverCol(null);
+    }
   };
   const handleMouseLeave = () => { setHoverRow(null); setHoverCol(null); };
-  const getLabel = (r,c) => `${LETTERS[c]}${SIZE-r}`;
+  const getLabel = (r,c) => getPositionLabel(r, c);
 
   return (
     <div className="board-container">
-      <Labels SIZE={SIZE} CELL={CELL} LETTERS={LETTERS} />
+      <Labels SIZE={BOARD_SIZE} CELL={CELL_SIZE} LETTERS={LETTERS} />
       <div className="board-col">
         <div className="left-numbers">
-          {Array.from({ length: SIZE }).map((_,i)=><div key={i} className="number-cell" style={{ top:`${i*CELL}px`, transform:'translate(-50%,-50%)' }}>{SIZE-i}</div>)}
+          {Array.from({ length: BOARD_SIZE }).map((_,i)=>
+            <div key={i} className="number-cell" style={{ top:`${i*CELL_SIZE}px`, transform:'translate(-50%,-50%)' }}>
+              {BOARD_SIZE-i}
+            </div>
+          )}
         </div>
         <div className="board" onClick={handleClick} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-          <GridLines SIZE={SIZE} CELL={CELL}/>
-          {board.map((row, r) => // board의 각 행(row)과 행 인덱스(r)를 반복
-  row.map((st, c) =>   // 각 행의 각 칸(st)과 열 인덱스(c)를 반복
-    st && (            // 칸에 돌(st)이 있으면(즉, 값이 null/undefined/false가 아니면)
-      <Stone
-        key={`${r}-${c}`}   // React에서 각 요소를 구분하기 위한 고유 key
-        row={r}             // 현재 행 인덱스
-        col={c}             // 현재 열 인덱스
-        color={st}          // 돌의 색상(흑/백 등)
-        CELL={CELL}         // CELL이라는 props 전달(아마 셀 크기 등)
-        number={moveNumbers.get(`${r}-${c}`) || null}
-        // number: 이 위치(r, c)에 놓인 돌이 몇 번째 수인지(없으면 null)
-        isLast={
-          moves.length > 0 &&
-          moves[moves.length - 1].row === r &&
-          moves[moves.length - 1].col === c
-        }
-        // isLast: 마지막으로 놓인 돌이 이 자리면 true, 아니면 false
-      />
-    )
-  )
-)}
-
-          {hoverRow!==null&&hoverCol!==null&&<PreviewStone row={hoverRow} col={hoverCol} turn={userColor} label={getLabel(hoverRow,hoverCol)} CELL={CELL}/>}
+          <GridLines SIZE={BOARD_SIZE} CELL={CELL_SIZE}/>
+          {board.map((row, r) =>
+            row.map((st, c) =>
+              st && (
+                <Stone
+                  key={`${r}-${c}`}
+                  row={r}
+                  col={c}
+                  color={st}
+                  CELL={CELL_SIZE}
+                  number={moveNumbers.get(`${r}-${c}`) || null}
+                  isLast={
+                    moves.length > 0 &&
+                    moves[moves.length - 1].row === r &&
+                    moves[moves.length - 1].col === c
+                  }
+                />
+              )
+            )
+          )}
+          {hoverRow!==null&&hoverCol!==null&&
+            <PreviewStone
+              row={hoverRow}
+              col={hoverCol}
+              turn={userColor}
+              label={getLabel(hoverRow,hoverCol)}
+              CELL={CELL_SIZE}
+            />}
         </div>
       </div>
     </div>
