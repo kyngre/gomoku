@@ -11,7 +11,7 @@ import Labels from './Labels';
 const API     = import.meta.env.VITE_API_URL;
 const SIZE    = 19;
 const CELL    = 30;
-const LETTERS = 'ABCDEFGHJKLMNOPQRST'.split('');
+const LETTERS = 'ABCDEFGHIJKLMNOPQRS'.split('');
 
 export default function Board() {
   const { strategy } = useParams();
@@ -54,7 +54,7 @@ export default function Board() {
         const nb = b.map(r => [...r]); nb[row][col] = player; return nb;
       });
       setMoves([{ row, col, player }]);
-      setTurn(user_color);
+      setTurn(prev => prev === userColor ? aiColor : userColor);
     } else {
       // 아니면 흑돌이 기본 선공
       setTurn('black');
@@ -92,7 +92,10 @@ export default function Board() {
   }
 
   
-
+  // 턴 전환 함수 추가
+const toggleTurn = () => {
+  setTurn(prev => (prev === userColor ? aiColor : userColor));
+};
 
   // 이하 기존 Board 렌더링 로직
   const handleClick = async (e) => {
@@ -106,6 +109,7 @@ export default function Board() {
     // 유저 착수
     setBoard(b => { const nb=b.map(r=>[...r]); nb[row][col]=userColor; return nb; });
     setMoves(mv=>[...mv,{ row, col, player:userColor }]);
+    toggleTurn(); // 1차 턴 전환 (AI)
 
     try {
       const res = await axios.post(`${API}/move/${strategy}`, {
@@ -118,13 +122,15 @@ export default function Board() {
         const { row:ar, col:ac, player:ap } = res.data.ai_move;
         setBoard(b => { const nb=b.map(r=>[...r]); nb[ar][ac]=ap; return nb; });
         setMoves(mv=>[...mv,{ row:ar, col:ac, player:ap }]);
+        toggleTurn(); // 2차 턴 전환 (유저) ✅
       }
       if (res.data.result==='user_win'||res.data.result==='ai_win') {
         alert(`${res.data.winner} wins!`);
         return;
       }
-      setTurn(userColor);
     } catch(err) {
+      // AI 착수 API 실패시 롤백 로직 추가
+      toggleTurn(); // 실패 시 턴 되돌리기
       console.error('POST /move 실패', err);
     }
   };
@@ -171,7 +177,7 @@ export default function Board() {
   )
 )}
 
-          {hoverRow!==null&&hoverCol!==null&&<PreviewStone row={hoverRow} col={hoverCol} turn={userColor} label={getLabel(hoverRow,hoverCol)} CELL={CELL}/>}'
+          {hoverRow!==null&&hoverCol!==null&&<PreviewStone row={hoverRow} col={hoverCol} turn={userColor} label={getLabel(hoverRow,hoverCol)} CELL={CELL}/>}
         </div>
       </div>
     </div>
