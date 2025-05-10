@@ -28,10 +28,12 @@ export default function Board() {
   const [turn, setTurn] = useState('black');
   const [hoverRow, setHoverRow] = useState(null);
   const [hoverCol, setHoverCol] = useState(null);
+  const [gameOver, setGameOver] = useState(false);
 
   // 게임 시작 요청 함수
   const startGame = async (pickedColor) => {
     // 초기화
+    setGameOver(false); 
     setBoard(Array.from({ length: SIZE }, () => Array(SIZE).fill(null)));
     setMoves([]);
     setChoice(pickedColor);
@@ -97,8 +99,12 @@ const toggleTurn = () => {
   setTurn(prev => (prev === userColor ? aiColor : userColor));
 };
 
+
+
   // 이하 기존 Board 렌더링 로직
   const handleClick = async (e) => {
+    if (gameOver || turn !== userColor) return; // 게임 종료 시 클릭 무시
+
     if (turn !== userColor) return;
     const { left, top } = e.currentTarget.getBoundingClientRect();
     const col = Math.round((e.clientX - left) / CELL);
@@ -122,10 +128,11 @@ const toggleTurn = () => {
         const { row:ar, col:ac, player:ap } = res.data.ai_move;
         setBoard(b => { const nb=b.map(r=>[...r]); nb[ar][ac]=ap; return nb; });
         setMoves(mv=>[...mv,{ row:ar, col:ac, player:ap }]);
-        toggleTurn(); // 2차 턴 전환 (유저) ✅
+        toggleTurn(); // 2차 턴 전환 (유저) 
       }
       if (res.data.result==='user_win'||res.data.result==='ai_win') {
         alert(`${res.data.winner} wins!`);
+        setGameOver(true); // 게임 종료 상태 활성화
         return;
       }
     } catch(err) {
