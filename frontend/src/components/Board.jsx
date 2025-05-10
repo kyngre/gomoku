@@ -1,77 +1,84 @@
-import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import './styles/Board.css';
+import { useState, useEffect, useRef } from 'react';
 import Stone from './Stone';
 import PreviewStone from './PreviewStone';
 import GridLines from './GridLines';
 import Labels from './Labels';
+import './styles/Board.css';
 
 import {
-  API_URL,
   BOARD_SIZE,
   CELL_SIZE,
   LETTERS,
   COLORS,
-  STRATEGIES,
-  GAME_RESULT,
 } from '../constants';
 
-import {
-  createEmptyBoard,
-  getPositionLabel,
-  getBoardCoords,
-  createMoveNumberMap,
-  isValidBoardCoord,
-} from '../utils';
+import { isValidBoardCoord, getPositionLabel, getBoardCoords } from '../utils';
+import { useGame } from '../hooks/useGame';
+import { useHover } from '../hooks/useHover';
 
 export default function Board() {
   const { strategy } = useParams();
+  const {
+    choice,
+    board,
+    moves,
+    userColor,
+    aiColor,
+    turn,
+    gameOver,
+    moveNumbers,
+    startGame,
+    makeMove,
+  } = useGame(strategy);
 
-  // 사용자 색상 선택: 'black' 또는 'white'
-  const [choice, setChoice] = useState(null);
-  const [gameId, setGameId] = useState(null);
-  const [board, setBoard] = useState(createEmptyBoard());
-  const [moves, setMoves] = useState([]);
-  const [userColor, setUserColor] = useState(COLORS.BLACK);
-  const [aiColor, setAiColor] = useState(COLORS.WHITE);
-  const [turn, setTurn] = useState(COLORS.BLACK);
-  const [hoverRow, setHoverRow] = useState(null);
-  const [hoverCol, setHoverCol] = useState(null);
-  const [gameOver, setGameOver] = useState(false);
+  const {
+    hoverRow,
+    hoverCol,
+    handleMouseMove,
+    handleMouseLeave,
+  } = useHover();
 
-  const moveNumbers = useMemo(() => createMoveNumberMap(moves), [moves]);
+  // 팝업 상태: 게임 종료 시 true, 확인 누르면 false
+  const [showPopup, setShowPopup] = useState(false);
 
-  // 게임 시작 요청 함수
-  const startGame = async (pickedColor) => {
-    setGameOver(false); 
-    setBoard(createEmptyBoard());
-    setMoves([]);
-    setChoice(pickedColor);
+  // 대시보드 ref
+  const dashboardRef = useRef(null);
 
-    const res = await axios.post(`${API_URL}/start-game`, {
-      ai_strategy: strategy || STRATEGIES.EASY,
-      user_color: pickedColor
-    });
-    const { game_id, user_color, ai_color, first_ai_move } = res.data;
+  // 게임 종료 시 팝업 자동 표시
+  useEffect(() => {
+    if (gameOver) setShowPopup(true);
+  }, [gameOver]);
 
-    setGameId(game_id);
-    setUserColor(user_color);
-    setAiColor(ai_color);
-
-    if (first_ai_move) {
-      const { row, col, player } = first_ai_move;
-      setBoard(b => {
-        const nb = b.map(r => [...r]); nb[row][col] = player; return nb;
-      });
-      setMoves([{ row, col, player }]);
-      setTurn(prev => prev === userColor ? aiColor : userColor);
-    } else {
-      setTurn(COLORS.BLACK);
+  const handleClick = async (e) => {
+    if (gameOver || turn !== userColor) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { row, col } = getBoardCoords(e.clientX, e.clientY, rect);
+    if (isValidBoardCoord(row, col) && !board[row][col]) {
+      await makeMove(row, col);
     }
   };
 
-  // 색상 선택 카드 UI
+  // 팝업에서 "확인" 클릭 시 대시보드로 스크롤
+  const handlePopupConfirm = () => {
+    setShowPopup(false);
+    setTimeout(() => {
+      dashboardRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  };
+
+  // 승자 판정
+  let winner = null;
+  if (gameOver && moves.length > 0) {
+    const last = moves[moves.length - 1];
+    winner = last.player === userColor ? 'user' : 'ai';
+  }
+
+  // 통계
+  const myMoves = moves.filter(m => m.player === userColor).length;
+  const aiMoves = moves.filter(m => m.player === aiColor).length;
+
+  // 색상 선택 카드 UI (ColorCard 분리 전)
   if (!choice) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
@@ -86,7 +93,6 @@ export default function Board() {
             <h3 className="text-xl font-semibold text-gray-800 group-hover:text-white mb-2">흑돌</h3>
             <p className="text-gray-600 text-center group-hover:text-gray-200">선공으로 시작합니다.</p>
           </div>
-
           {/* 백돌 카드 */}
           <div
             onClick={() => startGame(COLORS.WHITE)}
@@ -101,103 +107,98 @@ export default function Board() {
     );
   }
 
-  // 턴 전환 함수
-  const toggleTurn = () => {
-    setTurn(prev => (prev === userColor ? aiColor : userColor));
-  };
-
-  // 이하 기존 Board 렌더링 로직
-  const handleClick = async (e) => {
-    if (gameOver || turn !== userColor) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const { row, col } = getBoardCoords(e.clientX, e.clientY, rect);
-    if (!isValidBoardCoord(row, col)) return;
-    if (board[row][col]) return;
-
-    // 유저 착수
-    setBoard(b => { const nb=b.map(r=>[...r]); nb[row][col]=userColor; return nb; });
-    setMoves(mv=>[...mv,{ row, col, player:userColor }]);
-    toggleTurn();
-
-    try {
-      const res = await axios.post(`${API_URL}/move/${strategy}`, {
-        game_id: gameId,
-        row, col,
-        player: userColor
-      });
-      // AI 응수
-      if (res.data.ai_move) {
-        const { row:ar, col:ac, player:ap } = res.data.ai_move;
-        setBoard(b => { const nb=b.map(r=>[...r]); nb[ar][ac]=ap; return nb; });
-        setMoves(mv=>[...mv,{ row:ar, col:ac, player:ap }]);
-        toggleTurn();
-      }
-      if (res.data.result===GAME_RESULT.USER_WIN||res.data.result===GAME_RESULT.AI_WIN) {
-        alert(`${res.data.winner} wins!`);
-        setGameOver(true);
-        return;
-      }
-    } catch(err) {
-      toggleTurn();
-      console.error('POST /move 실패', err);
-    }
-  };
-
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const { row, col } = getBoardCoords(e.clientX, e.clientY, rect);
-    if (isValidBoardCoord(row, col) && !board[row][col]) {
-      setHoverRow(row); setHoverCol(col);
-    } else {
-      setHoverRow(null); setHoverCol(null);
-    }
-  };
-  const handleMouseLeave = () => { setHoverRow(null); setHoverCol(null); };
-  const getLabel = (r,c) => getPositionLabel(r, c);
-
   return (
     <div className="board-container">
       <Labels SIZE={BOARD_SIZE} CELL={CELL_SIZE} LETTERS={LETTERS} />
       <div className="board-col">
         <div className="left-numbers">
-          {Array.from({ length: BOARD_SIZE }).map((_,i)=>
-            <div key={i} className="number-cell" style={{ top:`${i*CELL_SIZE}px`, transform:'translate(-50%,-50%)' }}>
-              {BOARD_SIZE-i}
+          {Array.from({ length: BOARD_SIZE }).map((_, i) => (
+            <div
+              key={i}
+              className="number-cell"
+              style={{
+                top: `${i * CELL_SIZE}px`,
+                transform: 'translate(-50%,-50%)',
+              }}
+            >
+              {BOARD_SIZE - i}
             </div>
-          )}
+          ))}
         </div>
-        <div className="board" onClick={handleClick} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-          <GridLines SIZE={BOARD_SIZE} CELL={CELL_SIZE}/>
+        <div
+          className="board"
+          onClick={handleClick}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          <GridLines SIZE={BOARD_SIZE} CELL={CELL_SIZE} />
           {board.map((row, r) =>
-            row.map((st, c) =>
-              st && (
-                <Stone
-                  key={`${r}-${c}`}
-                  row={r}
-                  col={c}
-                  color={st}
-                  CELL={CELL_SIZE}
-                  number={moveNumbers.get(`${r}-${c}`) || null}
-                  isLast={
-                    moves.length > 0 &&
-                    moves[moves.length - 1].row === r &&
-                    moves[moves.length - 1].col === c
-                  }
-                />
-              )
+            row.map(
+              (st, c) =>
+                st && (
+                  <Stone
+                    key={`${r}-${c}`}
+                    row={r}
+                    col={c}
+                    color={st}
+                    CELL={CELL_SIZE}
+                    number={moveNumbers.get(`${r}-${c}`) || null}
+                    isLast={
+                      moves.length > 0 &&
+                      moves[moves.length - 1].row === r &&
+                      moves[moves.length - 1].col === c
+                    }
+                  />
+                )
             )
           )}
-          {hoverRow!==null&&hoverCol!==null&&
+          {hoverRow !== null && hoverCol !== null && (
             <PreviewStone
               row={hoverRow}
               col={hoverCol}
               turn={userColor}
-              label={getLabel(hoverRow,hoverCol)}
+              label={getPositionLabel(hoverRow, hoverCol)}
               CELL={CELL_SIZE}
-            />}
+            />
+          )}
         </div>
       </div>
+
+      {/* 게임 종료 팝업 (한 번만) */}
+      {gameOver && showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content popup-slide-in">
+            <p style={{ fontSize: "1.25rem", marginBottom: "1.2rem" }}>
+              {winner === 'user'
+                ? '🎉 축하합니다! 당신이 이겼습니다!'
+                : winner === 'ai'
+                ? '🤖 AI가 승리했습니다!'
+                : '게임 종료'}
+            </p>
+            <button className="modal-btn" onClick={handlePopupConfirm}>
+              확인
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 게임 종료 대시보드 (보드 아래 일반 DOM, 다시시작 버튼 없음) */}
+      <div ref={dashboardRef} />
+      {gameOver && !showPopup && (
+        <div className="result-dashboard-normal">
+          <div className="result-dashboard-inner">
+            <span className="result-emoji">
+              {winner === 'user' ? '🏆' : '🤖'}
+            </span>
+            <span className="result-title">
+              {winner === 'user' ? '축하합니다! 당신이 이겼습니다!' : 'AI가 승리했습니다!'}
+            </span>
+            <span className="result-stats">
+              총 착수: <b>{moves.length}</b> | 내 착수: <b>{myMoves}</b> | AI 착수: <b>{aiMoves}</b>
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
