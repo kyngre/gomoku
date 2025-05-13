@@ -4,3 +4,4 @@ flask_sqlalchemy
 python-dotenv
 pymysql
 cryptography
+numba

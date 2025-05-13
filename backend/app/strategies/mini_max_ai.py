@@ -1,30 +1,14 @@
 import numpy as np
 import copy
+import numba
 
-def evaluate_board(board, player):
-    score = 0
-    for i in range(19):
-        for j in range(19):
-            if j <= 14:
-                pattern = board[i, j:j + 5]
-                score += get_score_from_pattern(pattern, player)
-            if i <= 14:
-                pattern = board[i:i + 5, j]
-                score += get_score_from_pattern(pattern, player)
-            if i <= 14 and j <= 14:
-                pattern = np.diag(board[i:i + 5, j:j + 5])
-                score += get_score_from_pattern(pattern, player)
-            if i <= 14 and j >= 4:
-                pattern = np.diag(np.fliplr(board[i:i + 5, j - 4:j + 1]))
-                score += get_score_from_pattern(pattern, player)
-    return score
-
+@numba.jit(nopython=True)
 def get_score_from_pattern(pattern, player):
-    score = 0
     opponent = 1 if player == 2 else 2
-    player_count = pattern.tolist().count(player)
-    opponent_count = pattern.tolist().count(opponent)
+    player_count = np.sum(pattern == player)
+    opponent_count = np.sum(pattern == opponent)
 
+    score = 0
     if opponent_count == 0 and player == 1:
         if player_count == 5:
             score += 1000000
@@ -51,6 +35,24 @@ def get_score_from_pattern(pattern, player):
 
     return score
 
+@numba.jit(nopython=True)
+def evaluate_board(board, player):
+    score = 0
+    for i in range(19):
+        for j in range(19):
+            if j <= 14:
+                pattern = board[i, j:j + 5]
+                score += get_score_from_pattern(pattern, player)
+            if i <= 14:
+                pattern = board[i:i + 5, j]
+                score += get_score_from_pattern(pattern, player)
+            if i <= 14 and j <= 14:
+                pattern = np.diag(board[i:i + 5, j:j + 5])
+                score += get_score_from_pattern(pattern, player)
+            if i <= 14 and j >= 4:
+                pattern = np.diag(np.fliplr(board[i:i + 5, j - 4:j + 1]))
+                score += get_score_from_pattern(pattern, player)
+    return score
 
 def get_mini_max_move(board):
     board = np.array(board)
