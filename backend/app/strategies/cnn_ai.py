@@ -3,14 +3,14 @@ from tensorflow.keras.models import load_model
 import tensorflow as tf
 
 try:
-    model = load_model('/home/jinjinjara1022/OmokAI/models/best.h5')
+    model = load_model('./app/strategies/model_weight/best.h5')
     print("모델 로드 성공")
 except Exception as e:
     print("모델 로딩 실패:", e)
 
 def get_cnn_move(board):
     board = np.array(board)
-    
+
     input_ = board.copy()
 
     input_[input_ == 2] = -1
