@@ -35,8 +35,10 @@
 ---
 
 ## 🧠 사용자 알고리즘 커스터마이징 지원
-- 오픈소스 기반 구조 설계로 **사용자가 자신만의 착수 알고리즘을 구현하고 Pull Request로 제출**할 수 있도록 구성합니다.
-- details: t.b.a.
+
+**사용자가 자신만의 착수 알고리즘을 구현하고 Pull Request로 제출**할 수 있습니다.  
+
+자세한 내용은 [PR_GUIDE.md](https://github.com/kyngre/gomoku/blob/main/PR_GUIDE.md)를 참고하세요.
 
 ---
 
