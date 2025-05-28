@@ -182,7 +182,7 @@ export default function Board() {
         </div>
       )}
 
-      {/* 게임 종료 대시보드 (보드 아래 일반 DOM, 다시시작 버튼 없음) */}
+      {/* 게임 종료 대시보드 (보드 아래 일반 DOM) */}
       <div ref={dashboardRef} />
       {gameOver && !showPopup && (
         <div className="result-dashboard-normal">
