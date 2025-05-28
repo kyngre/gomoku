@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-// Dynamically defined AI levels (could be fetched from an API)
+// Defined AI levels 
 const getAILevels = () => [
   { id: "easy", name: "난이도 초급", description: "랜덤 착수 기반 AI", path: "/play/easy" },
   { id: "medium", name: "난이도 중급", description: "미니맥스 AI", path: "/play/medium" },
@@ -38,7 +38,7 @@ function Landing() {
 
           {/* 사용자 기여 알고리즘 */}
           <div
-            onClick={() => navigate("/user-ai")}
+            onClick={() => navigate("/users")}
             className="bg-yellow-50 p-6 rounded-xl border border-yellow-300 shadow hover:shadow-lg cursor-pointer transition"
           >
             <h3 className="text-lg font-bold text-yellow-800 mb-2">사용자 기여 알고리즘</h3>
