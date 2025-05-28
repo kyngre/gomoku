@@ -13,10 +13,21 @@ export const COLORS = {
   NONE: null,
 };
 
+// 기본 전략들
 export const STRATEGIES = {
   EASY: 'easy',
   MEDIUM: 'medium',
   HARD: 'hard',
+};
+
+// 사용자 AI 여부 확인 함수 추가
+export const isUserAI = (strategy) => {
+  return strategy && strategy.startsWith('user_');
+};
+
+// 전략 유효성 검사 함수 추가
+export const isValidStrategy = (strategy) => {
+  return Object.values(STRATEGIES).includes(strategy) || isUserAI(strategy);
 };
 
 export const GAME_RESULT = {
