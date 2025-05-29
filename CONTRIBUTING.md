@@ -50,41 +50,8 @@ def get_move(board):
 
 ## 3. PR 양식
 
-**제목:** Contribution: 오목 AI 알고리즘 [MySuperGomokuAI] 추가
-
-**본문:**
-
-- `gomoku/backend/app/strategies/contributions/github_id.py` 파일 추가.
+* **알고리즘 PR:** `algorithm_pr_template.md` 파일을 참조하여 양식에 맞춰 작성해주세요.
 
 
 ---
 
-## 4. PR 후 동작
-
-- 프론트엔드의 사용자 AI 목록 페이지에서 새로 등록된 AI를 확인할 수 있습니다.
-- "대국하기" 버튼을 통해 해당 AI와 대국을 시작할 수 있습니다.
-- 게임 페이지에서는 AI 이름, 설명, GitHub 링크 등이 표시됩니다.
-
----
-
-## 5. 예시
-
-```python
-meta = {
-    "addr": "github.com/username",
-    "name": "MyAwesomeAI",
-    "description": "중앙 우선 전략 AI",
-}
-
-def get_move(board):
-    # 간단한 중앙 우선 전략
-    center = 9
-    for distance in range(10):
-        for row in range(max(0, center-distance), min(19, center+distance+1)):
-            for col in range(max(0, center-distance), min(19, center+distance+1)):
-                if board[row][col] == 0:
-                    return row, col
-    return 9, 9
-```
-
----
