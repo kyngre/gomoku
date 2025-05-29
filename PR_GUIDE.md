@@ -9,13 +9,13 @@
 
 ## 1. PR 파일 작성 규칙
 
-- `app/strategies/contributions/` 폴더에 새로운 `.py` 파일을 생성합니다.
+- `gomoku/backend/app/strategies/contributions/` 폴더에 새로운 `.py` 파일을 생성합니다.
 - 파일명은 본인의 github id를 사용합니다. 예: `kyngre.py`
 - 파일 내에는 반드시 아래 구조를 포함해야 합니다:
 
 ```python
 meta = {
-    "id": "github.com/your-username",  # GitHub 프로필 또는 레포 주소
+    "addr": "github.com/your-username",  # GitHub 프로필 또는 레포 주소
     "name": "Your AI Name",            # AI 이름
     "description": "AI에 대한 간단한 설명",
 }
@@ -40,13 +40,26 @@ def get_move(board):
 ---
 
 ## 2. PR 제출 절차
-
-- 작성한 AI 파일을 프로젝트의 `app/strategies/contributions/` 폴더에 추가하여 PR을 생성합니다.
-- PR이 승인되어 머지되면, 자동으로 알고리즘을 인식하여 프론트엔드에 반영됩니다.
+- Fork & Clone: 프로젝트를 Fork해서 내 계정으로 가져온 뒤, 로컬 PC로 Clone합니다.
+- 브랜치 생성 & 파일 추가: 새 브랜치를 만들고 `gomoku/backend/app/strategies/contributions/`에 `.py` 파일을 넣습니다.
+- 커밋 & 푸시: 변경 사항을 커밋(Commit)하고 내 GitHub 저장소로 푸시(Push)합니다.
+- PR 생성: GitHub에서 Pull Request를 생성하고 설명을 작성합니다.
+- 승인 & 반영: PR이 승인되어 병합되면, 알고리즘이 자동으로 프론트엔드에 반영됩니다.
 
 ---
 
-## 3. PR 후 동작
+## 3. PR 양식
+
+**제목:** Contribution: 오목 AI 알고리즘 [MySuperGomokuAI] 추가
+
+**본문:**
+
+- `gomoku/backend/app/strategies/contributions/github_id.py` 파일 추가.
+
+
+---
+
+## 4. PR 후 동작
 
 - 프론트엔드의 사용자 AI 목록 페이지에서 새로 등록된 AI를 확인할 수 있습니다.
 - "대국하기" 버튼을 통해 해당 AI와 대국을 시작할 수 있습니다.
@@ -54,19 +67,11 @@ def get_move(board):
 
 ---
 
-## 4. 주의사항
-
-- 무한 루프나 과도한 연산을 피하고, 효율적인 알고리즘을 작성해주세요.
-- 파일명과 `meta['id']`는 고유해야 하며, 중복 시 문제가 발생할 수 있습니다.
-- PR 제출 전 충분한 테스트를 권장합니다.
-
----
-
 ## 5. 예시
 
 ```python
 meta = {
-    "id": "github.com/username/my_ai",
+    "addr": "github.com/username",
     "name": "MyAwesomeAI",
     "description": "중앙 우선 전략 AI",
 }
