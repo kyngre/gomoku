@@ -38,7 +38,7 @@
 
 **사용자가 자신만의 착수 알고리즘을 구현하고 Pull Request로 제출**할 수 있습니다.  
 
-자세한 내용은 [PR_GUIDE.md](https://github.com/kyngre/gomoku/blob/main/PR_GUIDE.md)를 참고하세요.
+자세한 내용은 [CONTRIBUTING.md](https://github.com/kyngre/gomoku/blob/main/CONTRIBUTING.md)를 참고하세요.
 
 ---
 
