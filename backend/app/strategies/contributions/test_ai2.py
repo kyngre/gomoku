@@ -1,7 +1,7 @@
 meta = {
     "addr": "github.com/kyngre", 
     "name": "Random AI", 
-    "description": "테스트용 랜덤 AI2 이 AI는 단순히 빈 칸 중 하나를 무작위로 선택합니다.",
+    "description": "테스트용 AI",
 }
 
 
