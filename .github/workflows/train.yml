@@ -30,8 +30,8 @@ jobs:
       - name: Train Model
         run: python training/fine_tuning.py
 
-      - name: Upload model artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: trained-model
-          path: training/models/model_best.pt
+      # - name: Upload model artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: trained-model
+      #     path: training/models/model_best.pt
