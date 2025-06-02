@@ -48,8 +48,8 @@ model.fit(
     batch_size=128,
     epochs=10,
     callbacks=callbacks,
-    use_multiprocessing=True,
-    workers=16
+#    use_multiprocessing=True,
+#    workers=16
 )
 
 # 학습 완료 후 최종 모델 저장
