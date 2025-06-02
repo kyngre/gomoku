@@ -3,8 +3,11 @@ import numpy as np
 import pandas as pd
 
 # 1. CSV 파일 경로 설정
-games_csv = '../data/raw/games_player_wins.csv'
-moves_csv = '../data/raw/moves_player_wins.csv'
+# games_csv = '../data/raw/games_player_wins.csv'
+# moves_csv = '../data/raw/moves_player_wins.csv'
+games_csv = 'mlops/data/raw/games_player_wins.csv'
+moves_csv = 'mlops/data/raw/moves_player_wins.csv'
+
 
 # 2. 데이터 로드
 games = pd.read_csv(games_csv, parse_dates=['created_at'])
