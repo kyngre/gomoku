@@ -26,7 +26,7 @@ strategy = tf.distribute.MirroredStrategy([gpu.name for gpu in gpus])
 print('\n\n Running on multiple GPUs ', [gpu.name for gpu in gpus])
 
 with strategy.scope():
-    model = load_model('/home/jinjinjara1022/OmokAI/models/best.h5')
+    model = load_model('mlops/training/models/fine_tuned_20250514_140607.h5')
     # (선택) 일부 레이어 동결
     # for layer in model.layers[:-2]:
     #     layer.trainable = False
