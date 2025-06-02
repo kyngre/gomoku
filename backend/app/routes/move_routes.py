@@ -40,45 +40,44 @@ def move_with_strategy(strategy):
 
     # 3. 현재 게임판 상태 및 AI 전략 로드
     board = get_board(game_id)
-    ai_func = get_strategy(strategy)  # 전략 패턴에 따른 AI 함수 선택
+    ai_func = get_strategy(strategy)
 
     # 4. 사용자 수 기록
     mv_user = Move(game_id=game_id, row=row, col=col, player=player)
     db.session.add(mv_user)
     db.session.commit()
 
-    # 5. 사용자 승리 확인
+    # 5. 사용자 승리 확인 → winner = 'player'
     if check_win(board, row, col, player):
-        game.winner = player
+        game.winner = 'player'
         db.session.commit()
         return jsonify({
             "result": "user_win",
-            "winner": player,
+            "winner": "player",
             "ai_move": None
         })
 
     # 6. AI 수 계산
-    board[row][col] = 1 if player == "black" else 2  # 게임판 상태 업데이트
-    pt = ai_func(board)  # AI 전략에 따른 다음 수 계산
-    
-    if not pt:  # 유효한 수가 없는 경우
+    board[row][col] = 1 if player == "black" else 2
+    pt = ai_func(board)
+    if not pt:
         return jsonify({"error": "No valid move"}), 400
 
     # 7. AI 수 기록
-    ar, ac = pt  # AI가 선택한 좌표
-    ai_color = "white" if player == "black" else "black"  # AI 색상 결정
+    ar, ac = pt
+    ai_color = "white" if player == "black" else "black"
     mv_ai = Move(game_id=game_id, row=ar, col=ac, player=ai_color)
     db.session.add(mv_ai)
     db.session.commit()
 
-    # 8. AI 승리 확인
-    board[ar][ac] = 1 if ai_color == "black" else 2  # 게임판 상태 업데이트
+    # 8. AI 승리 확인 → winner = 'ai'
+    board[ar][ac] = 1 if ai_color == "black" else 2
     if check_win(board, ar, ac, ai_color):
-        game.winner = ai_color
+        game.winner = 'ai'
         db.session.commit()
         return jsonify({
             "result": "ai_win",
-            "winner": ai_color,
+            "winner": "ai",
             "ai_move": {"row": ar, "col": ac, "player": ai_color}
         })
 
