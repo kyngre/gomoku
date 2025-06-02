@@ -25,10 +25,10 @@ jobs:
       # 데이터 추출은 리눅스 서버에서 별도로 실행하므로 생략
 
       - name: Prepare Training Data
-        run: python training/make_train_data.py
+        run: python mlops/training/make_train_data.py
 
       - name: Train Model
-        run: python training/fine_tuning.py
+        run: python mlops/training/fine_tuning.py
 
       # - name: Upload model artifact
       #   uses: actions/upload-artifact@v2
