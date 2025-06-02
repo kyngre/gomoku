@@ -78,3 +78,5 @@ coverage.xml
 /mysql
 mysql_data/
 
+mlops/training/models/
+*.pt
