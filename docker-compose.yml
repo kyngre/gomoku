@@ -14,9 +14,37 @@ services:
       MYSQL_DATABASE: gomoku
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
-
     volumes:
       - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+    container_name: gomoku-backend
+    depends_on:
+      - db
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - MYSQL_DB=gomoku
+    ports:
+      - "5050:5050"
+    command: python run.py
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: gomoku-frontend
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://10.125.208.186:5050 # bce-dl03
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host
 
 volumes:
   mysql_data:

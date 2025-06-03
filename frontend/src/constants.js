@@ -1,7 +1,7 @@
 // src/constants.js
 
-export const API_URL = import.meta.env.VITE_API_URL;
-
+export const API_URL = 'http://localhost:5050'; 
+// export const API_URL = import.meta.env.VITE_API_URL
 export const BOARD_SIZE = 19;
 export const CELL_SIZE = 30;
 export const LETTERS = 'ABCDEFGHIJKLMNOPQRS'.split('');

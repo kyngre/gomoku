@@ -1,0 +1,9 @@
+flask
+flask-cors
+flask_sqlalchemy
+flask_migrate
+python-dotenv
+pymysql
+cryptography
+numba
+tensorflow
