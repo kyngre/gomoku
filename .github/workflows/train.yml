@@ -2,7 +2,9 @@ name: Train Model Pipeline
 
 on:
   schedule:
-    - cron: '30 1 * * 2'  # 매주 화요일 10:30 KST (UTC+9)
+    - cron: '20 20 * * 6'  # 매주 일요일 05:00 KST (UTC+9)
+  workflow_dispatch:       # 수동 실행 가능 추가
+  
 jobs:
   train:
     runs-on: ubuntu-latest
