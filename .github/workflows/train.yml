@@ -1,8 +1,8 @@
 name: Train Model Pipeline
 
 on:
-  workflow_dispatch:
-
+  schedule:
+    - cron: '30 1 * * 2'  # 매주 화요일 10:30 KST (UTC+9)
 jobs:
   train:
     runs-on: ubuntu-latest
