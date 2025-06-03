@@ -55,5 +55,5 @@ model.fit(
 # 학습 완료 후 최종 모델 저장
 start_time = datetime.now().strftime('%Y%m%d_%H%M%S')
 os.makedirs('models', exist_ok=True)
-model.save(f'models/fine_tuned_{start_time}.h5')
+model.save(f'mlops/models/fine_tuned_{start_time}.h5')
 print(f"▶ Fine-tuned model saved to models/fine_tuned_{start_time}.h5")
