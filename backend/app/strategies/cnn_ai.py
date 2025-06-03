@@ -1,12 +1,33 @@
 import numpy as np
 from tensorflow.keras.models import load_model
 import tensorflow as tf
+import os
 
+# try:
+#     model = load_model('./app/strategies/model_weight/best.h5')
+#     print("모델 로드 성공")
+# except Exception as e:
+#     print("모델 로딩 실패:", e)
+
+
+MODEL_DIR = 'gomoku/mlops/training/models'
+DEFAULT_MODEL_PATH = './app/strategies/model_weight/best.h5'
+
+# 1. 가장 최근 모델 경로를 찾는 lambda
+get_latest_model = lambda: max(
+    [os.path.join(MODEL_DIR, f) for f in os.listdir(MODEL_DIR) if f.endswith('.h5')],
+    key=os.path.getctime
+) if os.path.exists(MODEL_DIR) and any(f.endswith('.h5') for f in os.listdir(MODEL_DIR)) else DEFAULT_MODEL_PATH
+
+# 2. 모델 로드 시도
 try:
-    model = load_model('./app/strategies/model_weight/best.h5')
-    print("모델 로드 성공")
+    model_path = get_latest_model()
+    model = load_model(model_path)
+    print(f"모델 로드 성공: {model_path}")
+    print(f"모델 로드 성공: {model_path}")
 except Exception as e:
     print("모델 로딩 실패:", e)
+
 
 def finish(board):
     n = 19
