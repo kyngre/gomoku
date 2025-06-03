@@ -1,7 +1,3 @@
-# mysql 실행: docker compose up -d
-# mysql 접속: docker exec -it gomoku-mysql mysql -u admin -p
-
-version: '3.8'
 services:
   db:
     image: mysql:8.0
@@ -16,6 +12,8 @@ services:
       MYSQL_PASSWORD: admin
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql-config:/etc/mysql/conf.d   # 추가: 설정파일 마운트
+
 
   backend:
     build:
