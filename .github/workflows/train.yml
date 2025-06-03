@@ -36,7 +36,7 @@ jobs:
           git config --global user.name "GitHub Actions"
 
           git pull origin main
-          git add models/
+          git add .
           git commit -m "Add fine-tuned model automatically [CI]" || echo "No changes to commit"
           git push origin main
         env:
