@@ -3,15 +3,13 @@ from tensorflow.keras.models import load_model
 import tensorflow as tf
 import os
 
-# try:
-#     model = load_model('./app/strategies/model_weight/best.h5')
-#     print("모델 로드 성공")
-# except Exception as e:
-#     print("모델 로딩 실패:", e)
+# 현재 이 파일이 위치한 디렉토리
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# 절대 경로 지정
+MODEL_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../../mlops/training/models'))
+DEFAULT_MODEL_PATH = os.path.abspath(os.path.join(BASE_DIR, 'model_weight/best.h5'))
 
-MODEL_DIR = 'gomoku/mlops/training/models'
-DEFAULT_MODEL_PATH = './app/strategies/model_weight/best.h5'
 
 # 1. 가장 최근 모델 경로를 찾는 lambda
 get_latest_model = lambda: max(
