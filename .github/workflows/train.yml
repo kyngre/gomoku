@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r mlops/requirements.txt
 
       # 데이터 추출은 리눅스 서버에서 별도로 실행하므로 생략
 
