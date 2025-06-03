@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '20 20 * * 6'  # 매주 일요일 05:00 KST (UTC+9)
   workflow_dispatch:       # 수동 실행 가능 추가
-  
+
 jobs:
   train:
     runs-on: ubuntu-latest
@@ -24,16 +24,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r mlops/requirements.txt
 
-      # 데이터 추출은 리눅스 서버에서 별도로 실행하므로 생략
-
       - name: Prepare Training Data
         run: python mlops/training/make_train_data.py
 
       - name: Train Model
         run: python mlops/training/fine_tuning.py
 
-      # - name: Upload model artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: trained-model
-      #     path: training/models/model_best.pt
+      - name: Commit and push trained model to repository
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          git pull origin main
+          git add models/
+          git commit -m "Add fine-tuned model automatically [CI]" || echo "No changes to commit"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
