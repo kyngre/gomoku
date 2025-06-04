@@ -7,7 +7,7 @@
 ## 1. 전체 구조
 ```
 gomoku/
-├── app/                      # Flask 백엔드
+├── backend/                      # Flask 백엔드
 │   ├── __init__.py           # 앱 팩토리
 │   ├── database.py           # DB 연결
 │   ├── models.py             # ORM 모델 정의 (Game, Move)
@@ -46,7 +46,7 @@ gomoku/
 
 ## 2. 주요 역할
 
-### 🔹 Flask 백엔드 (`app/`)
+### 🔹 Flask 백엔드 (`backend/`)
 - API 라우팅: `/routes`
 - 게임 및 수 기록 모델: `models.py`
 - AI 전략 등록 및 호출: `strategies/`, `user_ai_scripts/`
