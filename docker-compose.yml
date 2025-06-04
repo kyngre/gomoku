@@ -1,48 +1,47 @@
 services:
   db:
-    image: mysql:8.0
-    container_name: gomoku-mysql
-    restart: always
+    image: mysql:8.0  # MySQL 8.0 이미지 사용
+    container_name: gomoku-mysql  # 컨테이너 이름 설정
+    restart: always  # 컨테이너가 중단되면 자동 재시작
     ports:
-      - "3306:3306"
+      - "3306:3306"  # 호스트와 컨테이너 간 포트 매핑
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: gomoku
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: root  # 루트 사용자 비밀번호
+      MYSQL_DATABASE: gomoku     # 기본 데이터베이스 이름
+      MYSQL_USER: admin          # DB 사용자 계정
+      MYSQL_PASSWORD: admin      # DB 사용자 비밀번호
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql-config:/etc/mysql/conf.d   # 추가: 설정파일 마운트
-
+      - mysql_data:/var/lib/mysql  # 데이터 영속화를 위한 볼륨 마운트
+      - ./mysql-config:/etc/mysql/conf.d  # 커스텀 MySQL 설정파일 마운트
 
   backend:
     build:
-      context: ./backend
-    container_name: gomoku-backend
+      context: ./backend  # 빌드 컨텍스트 지정 (Dockerfile 위치)
+    container_name: gomoku-backend  # 컨테이너 이름 설정
     depends_on:
-      - db
+      - db  # DB 서비스가 실행된 후에 백엔드가 시작되도록 설정
     environment:
-      - FLASK_ENV=development
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
-      - MYSQL_HOST=db
-      - MYSQL_PORT=3306
-      - MYSQL_DB=gomoku
+      - FLASK_ENV=development  # Flask 개발 모드
+      - MYSQL_USER=admin       # DB 사용자 계정
+      - MYSQL_PASSWORD=admin   # DB 사용자 비밀번호
+      - MYSQL_HOST=db          # DB 컨테이너의 서비스 이름 (네트워크 호스트명)
+      - MYSQL_PORT=3306        # DB 포트
+      - MYSQL_DB=gomoku        # 연결할 데이터베이스 이름
     ports:
-      - "5050:5050"
-    command: python run.py
+      - "5050:5050"  # 호스트와 컨테이너 간 포트 매핑
+    command: python run.py  # 백엔드 실행 명령어
 
   frontend:
     build:
-      context: ./frontend
-    container_name: gomoku-frontend
+      context: ./frontend  # 빌드 컨텍스트 지정 (Dockerfile 위치)
+    container_name: gomoku-frontend  # 컨테이너 이름 설정
     depends_on:
-      - backend
+      - backend  # 백엔드 서비스가 실행된 후에 프론트엔드가 시작되도록 설정
     environment:
-      - VITE_API_URL=http://10.125.208.186:5050 # bce-dl03
+      - VITE_API_URL=http://10.125.208.186:5050  # 프론트엔드에서 백엔드 API 호출 주소 설정
     ports:
-      - "5173:5173"
-    command: npm run dev -- --host
+      - "5173:5173"  # 호스트와 컨테이너 간 포트 매핑
+    command: npm run dev -- --host  # 프론트엔드 개발 서버 실행 명령어
 
 volumes:
-  mysql_data:
+  mysql_data:  # DB 데이터 영속화를 위한 볼륨 선언
