@@ -28,8 +28,14 @@ services:
       - MYSQL_PORT=3306        # DB 포트
       - MYSQL_DB=gomoku        # 연결할 데이터베이스 이름
     ports:
+<<<<<<< HEAD
       - "5050:5050"  # 호스트와 컨테이너 간 포트 매핑
     command: python run.py  # 백엔드 실행 명령어
+=======
+      - "5050:5050"
+
+    command: python run.py
+>>>>>>> be95d13 (Add: Add full project documentation (install, usage, api, ai_strategies, etc.))
 
   frontend:
     build:

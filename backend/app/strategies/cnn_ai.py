@@ -22,7 +22,6 @@ try:
     model_path = get_latest_model()
     model = load_model(model_path)
     print(f"모델 로드 성공: {model_path}")
-    print(f"모델 로드 성공: {model_path}")
 except Exception as e:
     print("모델 로딩 실패:", e)
 
