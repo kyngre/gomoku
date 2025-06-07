@@ -44,7 +44,7 @@ def get_move(board):
 - Fork & Clone: 프로젝트를 Fork해서 내 계정으로 가져온 뒤, 로컬 PC로 Clone합니다.
 - 브랜치 생성 & 파일 추가: 새 브랜치를 만들고 `gomoku/backend/app/strategies/contributions/`에 `.py` 파일을 넣습니다.
 - 커밋 & 푸시: 변경 사항을 커밋(Commit)하고 내 GitHub 저장소로 푸시(Push)합니다.
-- PR 생성: GitHub에서 Pull Request를 생성하고 [algorithm_pr_template.md](https://github.com/kyngre/gomoku/blob/main/.github/PULL_REQUEST_TEMPLATE/algorithm_pr_template.md) 파일을 참조하여 양식에 맞춰 작성해주세요.
+- PR 생성: GitHub에서 Pull Request를 생성하고 [pull_request_template_algorithm.md](https://github.com/kyngre/gomoku/blob/main/.github/PULL_REQUEST_TEMPLATE/pull_request_template_algorithm.md) 파일을 참조하여 양식에 맞춰 작성해주세요.
 - 승인 & 반영: PR이 승인되어 병합되면, 알고리즘이 자동으로 프론트엔드에 반영됩니다.
 
 
