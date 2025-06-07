@@ -1,1 +1,6 @@
-theme: minima
+title: 오목 인공지능 웹 프로젝트 문서
+description: React + Flask 기반 오목 AI 웹 애플리케이션 기술 문서
+remote_theme: marella/jekyll-theme-documentation
+toc_min: 2
+toc_max: 3
+permalink: pretty
