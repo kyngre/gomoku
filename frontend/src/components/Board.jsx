@@ -42,6 +42,8 @@ export default function Board() {
 
   const [showPopup, setShowPopup] = useState(false);
   const dashboardRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     if (gameOver) setShowPopup(true);
@@ -67,35 +69,56 @@ export default function Board() {
   const myMoves = moves.filter(m => m.player === userColor).length;
   const aiMoves = moves.filter(m => m.player === aiColor).length;
 
-  // 색상 선택 카드 UI
-  if (!choice) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8">돌 색상을 선택하세요</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
-          {/* 흑돌 카드 */}
-          <div
-            onClick={() => startGame(COLORS.BLACK)}
-            className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-black"
-          >
-            <div className="w-24 h-24 bg-black rounded-full mb-4"></div>
-            <h3 className="text-xl font-semibold text-gray-800 group-hover:text-white mb-2">흑돌</h3>
-            <p className="text-gray-600 text-center group-hover:text-gray-200">선공으로 시작합니다.</p>
-          </div>
-          {/* 백돌 카드 */}
-          <div
-            onClick={() => startGame(COLORS.WHITE)}
-            className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-white"
-          >
-            <div className="w-24 h-24 bg-white rounded-full border border-gray-300 mb-4"></div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">백돌</h3>
-            <p className="text-gray-600 text-center">후공으로 시작합니다.</p>
-          </div>
+// 색상 선택 카드 UI
+if (!choice) {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">돌 색상을 선택하세요</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+        {/* 흑돌 카드 */}
+        <div
+          onClick={async () => {
+            setIsLoading(true);
+            await startGame(COLORS.BLACK);
+            setIsLoading(false);
+          }}
+          className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-black"
+        >
+          <div className="w-24 h-24 bg-black rounded-full mb-4"></div>
+          <h3 className="text-xl font-semibold text-gray-800 group-hover:text-white mb-2">흑돌</h3>
+          <p className="text-gray-600 text-center group-hover:text-gray-200">선공으로 시작합니다.</p>
+        </div>
+        {/* 백돌 카드 */}
+        <div
+          onClick={async () => {
+            setIsLoading(true);
+            await startGame(COLORS.WHITE);
+            setIsLoading(false);
+          }}
+          className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-white"
+        >
+          <div className="w-24 h-24 bg-white rounded-full border border-gray-300 mb-4"></div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">백돌</h3>
+          <p className="text-gray-600 text-center">후공으로 시작합니다.</p>
         </div>
       </div>
-    );
-  }
+      {isLoading && (
+        <div className="mt-8 text-lg text-blue-600 font-semibold animate-pulse">
+          게임 준비 중...
+        </div>
+      )}
+    </div>
+  );
+}
 
+// 바둑판 렌더링 전에 로딩 체크
+if (isLoading) {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+      <div className="text-2xl font-bold text-blue-600 animate-pulse">게임 준비 중...</div>
+    </div>
+  );
+}
   // 결과 메시지 매핑
   const resultMessages = {
     user_win: { emoji: '🏆', msg: '🎉 축하합니다! 당신이 이겼습니다!' },
