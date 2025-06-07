@@ -47,7 +47,7 @@ gomoku/
 - AI 전략 등록 및 호출: `strategies/`, `strategies/contributions/`
 - 유틸리티: `check_win.py` (승부 판정)
 
-### 🔹 프론트엔드 (`frontend/`)
+### 🔹 React 프론트엔드 (`frontend/`)
 - 19x19 오목판 UI, 상태 표시, 전략 선택 등 사용자 인터페이스 구성
 - `axios` 기반 API 호출 서비스 존재
 
