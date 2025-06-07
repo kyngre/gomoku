@@ -1,7 +1,3 @@
----
-title: 설치 가이드
----
-
 이 프로젝트는 React 프론트엔드와 Flask 백엔드로 구성되어 있으며, Docker를 통한 통합 실행 환경을 제공합니다.
 
 ### Docker Compose로 실행
