@@ -15,7 +15,7 @@ function Users() {
   const fetchUserAIs = async () => {
     try {
       console.log("API 호출 시작");
-      const response = await axios.get("http://localhost:5050/contributions");
+      const response = await axios.get("http://10.125.208.186:5050/contributions");
       console.log("API 응답:", response.data);
       setAiList(response.data);
     } catch (error) {

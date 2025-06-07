@@ -1,11 +1,16 @@
-## ⚙️ 설치 가이드
+---
+title: 설치 가이드
+---
 
 이 프로젝트는 React 프론트엔드와 Flask 백엔드로 구성되어 있으며, Docker를 통한 통합 실행 환경을 제공합니다.
 
-### 1. 필수 조건
+### Docker Compose로 실행
+```bash
+docker compose up 
+```
+### 1. 로컬 실행 조건
 - Python 3.9 이상
 - Node.js 16 이상
-- Docker & Docker Compose (선택)
 
 ### 2. 프로젝트 클론
 ```bash
@@ -50,9 +55,5 @@ cd frontend
 npm run dev
 ```
 
-### 8. Docker Compose로 실행 (선택)
-```bash
-docker-compose up --build
-```
 
-> ⚠️ 처음 실행 시 AI 모델 가중치가 자동으로 다운로드되지 않으므로, `mlops/training/models/` 디렉토리에 `best.h5` 파일이 필요합니다.
+

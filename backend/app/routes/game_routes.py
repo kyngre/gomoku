@@ -1,4 +1,4 @@
-# app/routes/game_routes.py 수정
+# app/routes/game_routes.py 
 
 from flask import Blueprint, request, jsonify
 from app.database import db
