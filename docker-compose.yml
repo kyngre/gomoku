@@ -44,6 +44,10 @@ services:
     ports:
       - "5173:5173"  # 호스트와 컨테이너 간 포트 매핑
     command: npm run dev -- --host  # 프론트엔드 개발 서버 실행 명령어
+    volumes:
+      - ./frontend:/app  # 호스트의 ./frontend를 컨테이너 /app에 마운트
+      - /app/node_modules  # node_modules는 컨테이너 내부 것 사용
+
 
 volumes:
   mysql_data:  # DB 데이터 영속화를 위한 볼륨 선언

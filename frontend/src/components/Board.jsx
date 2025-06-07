@@ -30,6 +30,7 @@ export default function Board() {
     moveNumbers,
     startGame,
     makeMove,
+    resultType, // 'user_win', 'ai_win', 'draw', null
   } = useGame(strategy);
 
   const {
@@ -39,13 +40,9 @@ export default function Board() {
     handleMouseLeave,
   } = useHover();
 
-  // 팝업 상태: 게임 종료 시 true, 확인 누르면 false
   const [showPopup, setShowPopup] = useState(false);
-
-  // 대시보드 ref
   const dashboardRef = useRef(null);
 
-  // 게임 종료 시 팝업 자동 표시
   useEffect(() => {
     if (gameOver) setShowPopup(true);
   }, [gameOver]);
@@ -59,7 +56,6 @@ export default function Board() {
     }
   };
 
-  // 팝업에서 "확인" 클릭 시 대시보드로 스크롤
   const handlePopupConfirm = () => {
     setShowPopup(false);
     setTimeout(() => {
@@ -67,18 +63,11 @@ export default function Board() {
     }, 50);
   };
 
-  // 승자 판정
-  let winner = null;
-  if (gameOver && moves.length > 0) {
-    const last = moves[moves.length - 1];
-    winner = last.player === userColor ? 'user' : 'ai';
-  }
-
   // 통계
   const myMoves = moves.filter(m => m.player === userColor).length;
   const aiMoves = moves.filter(m => m.player === aiColor).length;
 
-  // 색상 선택 카드 UI (ColorCard 분리 전)
+  // 색상 선택 카드 UI
   if (!choice) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
@@ -106,6 +95,14 @@ export default function Board() {
       </div>
     );
   }
+
+  // 결과 메시지 매핑
+  const resultMessages = {
+    user_win: { emoji: '🏆', msg: '🎉 축하합니다! 당신이 이겼습니다!' },
+    ai_win: { emoji: '🤖', msg: 'AI가 승리했습니다!' },
+    draw: { emoji: '🤝', msg: '무승부입니다! 멋진 대결이었습니다.' },
+  };
+  const result = resultMessages[resultType] || {};
 
   return (
     <div className="board-container">
@@ -164,16 +161,12 @@ export default function Board() {
         </div>
       </div>
 
-      {/* 게임 종료 팝업 (한 번만) */}
+      {/* 게임 종료 팝업 */}
       {gameOver && showPopup && (
         <div className="popup-overlay">
           <div className="popup-content popup-slide-in">
             <p style={{ fontSize: "1.25rem", marginBottom: "1.2rem" }}>
-              {winner === 'user'
-                ? '🎉 축하합니다! 당신이 이겼습니다!'
-                : winner === 'ai'
-                ? '🤖 AI가 승리했습니다!'
-                : '게임 종료'}
+              {result.msg || '게임 종료'}
             </p>
             <button className="modal-btn" onClick={handlePopupConfirm}>
               확인
@@ -182,17 +175,13 @@ export default function Board() {
         </div>
       )}
 
-      {/* 게임 종료 대시보드 (보드 아래 일반 DOM) */}
+      {/* 게임 종료 대시보드 */}
       <div ref={dashboardRef} />
       {gameOver && !showPopup && (
         <div className="result-dashboard-normal">
           <div className="result-dashboard-inner">
-            <span className="result-emoji">
-              {winner === 'user' ? '🏆' : '🤖'}
-            </span>
-            <span className="result-title">
-              {winner === 'user' ? '축하합니다! 당신이 이겼습니다!' : 'AI가 승리했습니다!'}
-            </span>
+            <span className="result-emoji">{result.emoji || ''}</span>
+            <span className="result-title">{result.msg || '게임 종료'}</span>
             <span className="result-stats">
               총 착수: <b>{moves.length}</b> | 내 착수: <b>{myMoves}</b> | AI 착수: <b>{aiMoves}</b>
             </span>

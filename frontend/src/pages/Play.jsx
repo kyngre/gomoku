@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Board from '../components/Board';
+import { API_URL } from '../constants';
 
 function Play() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function Play() {
     try {
       console.log("사용자 AI 정보 로딩 시작");
       // Users.jsx와 동일한 엔드포인트 사용
-      const response = await axios.get("http://localhost:5050/contributions");
+      const response = await axios.get(`${API_URL}/contributions`);
       
       // file_id로 매칭 (user_ prefix 제거)
       const fileId = level.startsWith('user_') ? level.replace('user_', '') : level;

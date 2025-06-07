@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from '../constants';
+
 
 function Users() {
   const [aiList, setAiList] = useState([]);
@@ -15,7 +17,7 @@ function Users() {
   const fetchUserAIs = async () => {
     try {
       console.log("API 호출 시작");
-      const response = await axios.get("http://10.125.208.186:5050/contributions");
+      const response = await axios.get(`${API_URL}/contributions`);
       console.log("API 응답:", response.data);
       setAiList(response.data);
     } catch (error) {

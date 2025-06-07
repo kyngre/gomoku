@@ -6,6 +6,8 @@ from app.database import db
 from app.models import Game, Move
 from app.strategies import get_strategy
 from app.utils.check_win import check_win
+from app.utils.check_draw import check_draw
+# 
 from sqlalchemy import asc
 
 move_bp = Blueprint("move", __name__)
@@ -60,6 +62,10 @@ def move_with_strategy(strategy):
                 "winner": player,  # 동적 플레이어 ID 사용
                 "ai_move": None
             })
+        if check_draw(board):
+            game.result = "draw"
+            db.session.commit()
+            return jsonify({"result": "draw", "ai_move": None})
 
         board[row][col] = 1 if player == "black" else 2
         print("AI 수 계산 시작")  # HEAD 버전의 디버그 로그 유지
@@ -84,11 +90,17 @@ def move_with_strategy(strategy):
                 "winner": ai_color,  # 동적 AI 색상 사용
                 "ai_move": {"row": ar, "col": ac, "player": ai_color}
             })
+        # AI 이동 후 무승부 체크
+        if check_draw(board):
+            game.result = "draw"
+            db.session.commit()
+            return jsonify({"result": "draw", "ai_move": {"row": ar, "col": ac, "player": ai_color}})
 
         return jsonify({
             "result": "continue",
             "ai_move": {"row": ar, "col": ac, "player": ai_color}
         })
+
 
     except Exception as e:  # HEAD 버전의 예외 처리 유지
         print(f"Move API 오류: {str(e)}")

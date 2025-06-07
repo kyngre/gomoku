@@ -1,6 +1,6 @@
 // src/constants.js
 
-export const API_URL = 'http://localhost:5050'; 
+export const API_URL = 'http://10.125.208.186:5050'; // bce-dl03
 // export const API_URL = import.meta.env.VITE_API_URL
 export const BOARD_SIZE = 19;
 export const CELL_SIZE = 30;
