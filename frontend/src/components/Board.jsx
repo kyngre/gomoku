@@ -18,6 +18,7 @@ import { useGame } from '../hooks/useGame';
 import { useHover } from '../hooks/useHover';
 
 export default function Board() {
+  // --- 게임 상태 및 훅 초기화 ---
   const { strategy } = useParams();
   const {
     choice,
@@ -44,11 +45,12 @@ export default function Board() {
   const dashboardRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
-
+  // --- 게임 종료 시 팝업 표시 ---
   useEffect(() => {
     if (gameOver) setShowPopup(true);
   }, [gameOver]);
 
+  // --- 바둑판 클릭 핸들러 ---
   const handleClick = async (e) => {
     if (gameOver || turn !== userColor) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -58,6 +60,7 @@ export default function Board() {
     }
   };
 
+  // --- 결과 팝업 확인 버튼 핸들러 ---
   const handlePopupConfirm = () => {
     setShowPopup(false);
     setTimeout(() => {
@@ -65,61 +68,11 @@ export default function Board() {
     }, 50);
   };
 
-  // 통계
+  // --- 게임 통계 계산 ---
   const myMoves = moves.filter(m => m.player === userColor).length;
   const aiMoves = moves.filter(m => m.player === aiColor).length;
 
-// 색상 선택 카드 UI
-if (!choice) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">돌 색상을 선택하세요</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
-        {/* 흑돌 카드 */}
-        <div
-          onClick={async () => {
-            setIsLoading(true);
-            await startGame(COLORS.BLACK);
-            setIsLoading(false);
-          }}
-          className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-black"
-        >
-          <div className="w-24 h-24 bg-black rounded-full mb-4"></div>
-          <h3 className="text-xl font-semibold text-gray-800 group-hover:text-white mb-2">흑돌</h3>
-          <p className="text-gray-600 text-center group-hover:text-gray-200">선공으로 시작합니다.</p>
-        </div>
-        {/* 백돌 카드 */}
-        <div
-          onClick={async () => {
-            setIsLoading(true);
-            await startGame(COLORS.WHITE);
-            setIsLoading(false);
-          }}
-          className="group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-white"
-        >
-          <div className="w-24 h-24 bg-white rounded-full border border-gray-300 mb-4"></div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">백돌</h3>
-          <p className="text-gray-600 text-center">후공으로 시작합니다.</p>
-        </div>
-      </div>
-      {isLoading && (
-        <div className="mt-8 text-lg text-blue-600 font-semibold animate-pulse">
-          게임 준비 중...
-        </div>
-      )}
-    </div>
-  );
-}
-
-// 바둑판 렌더링 전에 로딩 체크
-if (isLoading) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <div className="text-2xl font-bold text-blue-600 animate-pulse">게임 준비 중...</div>
-    </div>
-  );
-}
-  // 결과 메시지 매핑
+  // --- 게임 결과 메시지 매핑 ---
   const resultMessages = {
     user_win: { emoji: '🏆', msg: '🎉 축하합니다! 당신이 이겼습니다!' },
     ai_win: { emoji: '🤖', msg: 'AI가 승리했습니다!' },
@@ -127,10 +80,88 @@ if (isLoading) {
   };
   const result = resultMessages[resultType] || {};
 
+  // --- 로딩 오버레이 컴포넌트 ---
+  const LoadingOverlay = () => (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-white">
+    <div className="flex flex-col items-center">
+      {/* Tailwind 기본 스피너 */}
+      <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-8"></div>
+      <div className="text-xl font-bold text-blue-700 text-center">
+        로딩 중입니다...
+      </div>
+    </div>
+  </div>
+);
+
+
+
+
+
+
+
+  // --- 오직 로딩 오버레이만 보여주기 ---
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+
+  // --- 돌 색상 선택 UI ---
+  if (!choice) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8">돌 색상을 선택하세요</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+          {/* 흑돌 카드 */}
+          <div
+            onClick={async () => {
+              setIsLoading(true);
+              const start = Date.now();
+              await startGame(COLORS.BLACK);
+              const elapsed = Date.now() - start;
+              const minDelay = 2000;
+              if (elapsed < minDelay) {
+                setTimeout(() => setIsLoading(false), minDelay - elapsed);
+              } else {
+                setIsLoading(false);
+              }
+            }}
+            className={`group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-black ${isLoading ? 'pointer-events-none opacity-60' : ''}`}
+          >
+            <div className="w-24 h-24 bg-black rounded-full mb-4"></div>
+            <h3 className="text-xl font-semibold text-gray-800 group-hover:text-white mb-2">흑돌</h3>
+            <p className="text-gray-600 text-center group-hover:text-gray-200">선공으로 시작합니다.</p>
+          </div>
+          {/* 백돌 카드 */}
+          <div
+            onClick={async () => {
+              setIsLoading(true);
+              const start = Date.now();
+              await startGame(COLORS.WHITE);
+              const elapsed = Date.now() - start;
+              const minDelay = 2000;
+              if (elapsed < minDelay) {
+                setTimeout(() => setIsLoading(false), minDelay - elapsed);
+              } else {
+                setIsLoading(false);
+              }
+            }}
+            className={`group cursor-pointer bg-gray-200 rounded-xl shadow-lg p-6 flex flex-col items-center hover:shadow-2xl transition hover:bg-white ${isLoading ? 'pointer-events-none opacity-60' : ''}`}
+          >
+            <div className="w-24 h-24 bg-white rounded-full border border-gray-300 mb-4"></div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">백돌</h3>
+            <p className="text-gray-600 text-center">후공으로 시작합니다.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- 바둑판 및 게임 UI 렌더링 ---
   return (
     <div className="board-container">
+      {/* 바둑판 라벨 */}
       <Labels SIZE={BOARD_SIZE} CELL={CELL_SIZE} LETTERS={LETTERS} />
       <div className="board-col">
+        {/* 바둑판 왼쪽 숫자 라벨 */}
         <div className="left-numbers">
           {Array.from({ length: BOARD_SIZE }).map((_, i) => (
             <div
@@ -145,6 +176,7 @@ if (isLoading) {
             </div>
           ))}
         </div>
+        {/* 바둑판 그리드 및 돌 렌더링 */}
         <div
           className="board"
           onClick={handleClick}
@@ -172,6 +204,7 @@ if (isLoading) {
                 )
             )
           )}
+          {/* 마우스 오버 시 미리보기 돌 */}
           {hoverRow !== null && hoverCol !== null && (
             <PreviewStone
               row={hoverRow}
@@ -184,7 +217,7 @@ if (isLoading) {
         </div>
       </div>
 
-      {/* 게임 종료 팝업 */}
+      {/* --- 게임 종료 팝업 --- */}
       {gameOver && showPopup && (
         <div className="popup-overlay">
           <div className="popup-content popup-slide-in">
@@ -198,7 +231,7 @@ if (isLoading) {
         </div>
       )}
 
-      {/* 게임 종료 대시보드 */}
+      {/* --- 게임 종료 대시보드 --- */}
       <div ref={dashboardRef} />
       {gameOver && !showPopup && (
         <div className="result-dashboard-normal">
