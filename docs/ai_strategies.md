@@ -19,11 +19,12 @@
 
 #### 🔹 CNNStrategy
 - 딥러닝(CNN) 기반 전략입니다.
-- 구현: app/strategies/cnn_strategy.py
+- 구현: `app/strategies/cnn_strategy.py`
 - gomocup 대회 기보 데이터를 기반으로 학습되었으며, 20×20 데이터를 19×19 보드에 맞게 전처리하였습니다.
 - CNN이 4목 상황에서 수비를 선택하는 문제를 보완하기 위해, 승리 수(5목)가 가능한 경우 알고리즘적으로 처리하여 종료 수를 우선 적용합니다.
+- MLOps 파이프라인을 통해 모델을 주기적으로 파인튜닝하며, 최신 기보 데이터를 반영하여 성능을 지속적으로 개선합니다.
 - 장점: 패턴 인식 기반으로 직관적인 수를 선택함
 - 단점: 학습 데이터 품질과 모델 구조에 따라 성능이 달라질 수 있음
-- 상세 구현: github.com/kimjin1022/Gomoku_Model
+- 모델 학습 및 구현: [https://github.com/kimjin1022/Gomoku_Model](https://github.com/kimjin1022/Gomoku_Model)
 
 ---
