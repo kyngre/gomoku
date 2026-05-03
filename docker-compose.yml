@@ -13,13 +13,20 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql  # 데이터 영속화를 위한 볼륨 마운트
       - ./mysql-config:/etc/mysql/conf.d  # 커스텀 MySQL 설정파일 마운트
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
 
   backend:
     build:
       context: ./backend  # 빌드 컨텍스트 지정 (Dockerfile 위치)
     container_name: gomoku-backend  # 컨테이너 이름 설정
     depends_on:
-      - db  # DB 서비스가 실행된 후에 백엔드가 시작되도록 설정
+      db:
+        condition: service_healthy  # DB가 실제로 쿼리를 받을 수 있을 때 백엔드 시작
     environment:
       - FLASK_ENV=development  # Flask 개발 모드
       - MYSQL_USER=admin       # DB 사용자 계정
@@ -40,7 +47,7 @@ services:
     depends_on:
       - backend  # 백엔드 서비스가 실행된 후에 프론트엔드가 시작되도록 설정
     environment:
-      - VITE_API_URL=http://10.125.208.186:5050  # 프론트엔드에서 백엔드 API 호출 주소 설정
+      - VITE_API_URL=http://localhost:5050  # 프론트엔드에서 백엔드 API 호출 주소 설정
     ports:
       - "5173:5173"  # 호스트와 컨테이너 간 포트 매핑
     command: npm run dev -- --host  # 프론트엔드 개발 서버 실행 명령어
